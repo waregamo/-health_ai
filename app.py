@@ -15,20 +15,25 @@ st.set_page_config(
 def authenticate():
     st.markdown("""
     <style>
+    .centered-login {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 90vh;
+    }
     .login-box {
         background-color: #ffffff;
         padding: 40px;
         border-radius: 12px;
         width: 100%;
         max-width: 400px;
-        margin: 100px auto;
-        text-align: center;
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        text-align: center;
     }
     </style>
+    <div class='centered-login'>
+        <div class='login-box'>
     """, unsafe_allow_html=True)
-
-    st.markdown("<div class='login-box'>", unsafe_allow_html=True)
 
     try:
         st.image("Assets/logo.jpg", width=100)
@@ -48,7 +53,7 @@ def authenticate():
                 st.error("Incorrect access key.")
 
     st.markdown("<p style='color: #666;'>Contact admin for access credentials</p>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div></div>", unsafe_allow_html=True)
 
 # ============ Main App ============
 def main_app():
@@ -201,6 +206,7 @@ if st.session_state.authenticated:
     main_app()
 else:
     authenticate()
+
 
 
 
