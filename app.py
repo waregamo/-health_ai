@@ -18,7 +18,7 @@ st.set_page_config(
 # AUTHENTICATION (Static Password)
 # ==============================
 def authenticate():
-    st.image("https://i.imgur.com/J5hZQ8L.png", width=300)  # Replace with your logo
+    st.image("Assets/logo.png", width=300)  # Replace with your logo
     st.markdown("<h1 style='text-align: center;'>Medical AI Portal</h1>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1,2,1])
@@ -74,7 +74,7 @@ def main_app():
 
     # Sidebar Navigation
     with st.sidebar:
-        st.image("https://i.imgur.com/J5hZQ8L.png", width=200)  # Logo
+        st.image("Assets/logo.png", width=200)  # Logo
         st.markdown("<h2 style='color: white;'>Navigation</h2>", unsafe_allow_html=True)
         selected = st.radio("", ["Home", "Diagnostics", "About Us"])
         
@@ -112,20 +112,20 @@ def show_home():
         </div>
         """, unsafe_allow_html=True)
     with col2:
-        st.image("https://i.imgur.com/7WgzQ0a.jpg", caption="AI in Healthcare")  # Replace with your image
-    
+        st.image("Assets/1.jpg", caption="AI in Healthcare")  # Replace with your image
+
     # Features Section
     st.markdown("---")
     st.markdown("<h2 style='text-align: center;'>Key Features</h2>", unsafe_allow_html=True)
     
     features = st.columns(3)
-    features[0].image("https://i.imgur.com/5XZJQ9W.png", width=150)
+    features[0].image("Assets/2.jpg", width=150)
     features[0].markdown("<h4 style='text-align: center;'>Rapid Analysis</h4>", unsafe_allow_html=True)
-    
-    features[1].image("https://i.imgur.com/8QZQZ9W.png", width=150)
+
+    features[1].image("Assets/3.jpg", width=150)
     features[1].markdown("<h4 style='text-align: center;'>Multi-Disease</h4>", unsafe_allow_html=True)
     
-    features[2].image("https://i.imgur.com/9XZJQ9W.png", width=150)
+    features[2].image("Assets/4.jpg", width=150)
     features[2].markdown("<h4 style='text-align: center;'>Confidence Metrics</h4>", unsafe_allow_html=True)
 
 def show_diagnostics():
@@ -190,9 +190,9 @@ def show_diagnostics():
 
 def show_about():
     st.markdown("<h1 style='text-align: center;'>About Our Platform</h1>", unsafe_allow_html=True)
-    
-    st.image("https://i.imgur.com/QWQZQ9W.jpg", use_column_width=True)  # Team image
-    
+
+    st.image("Assets/5.jpg", use_column_width=True)  # Team image
+
     st.markdown("""
     <div style='padding: 20px;'>
         <h3>Our Mission</h3>
