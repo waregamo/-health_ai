@@ -1,14 +1,11 @@
 import streamlit as st
 import numpy as np
-from PIL import Image
 import pandas as pd
+from PIL import Image
 import smtplib
 from email.mime.text import MIMEText
-import os
-from dotenv import load_dotenv
 
-load_dotenv()
-
+# ============ Streamlit Page Config ============
 st.set_page_config(
     page_title="AI Health Diagnostic Hub",
     page_icon="🩺",
@@ -16,11 +13,14 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# =========================
-# AUTHENTICATION PAGE
-# =========================
+# ============ Load Secrets ============
+EMAIL_USER = st.secrets["EMAIL_USER"]
+EMAIL_PASS = st.secrets["EMAIL_PASS"]
+EMAIL_TO = st.secrets["EMAIL_TO"]
+
+# ============ Authentication ============
 def authenticate():
-    # CSS for background image
+    # Background CSS
     st.markdown("""
     <style>
     .login-container {
@@ -55,23 +55,20 @@ def authenticate():
     with st.form("login"):
         password = st.text_input("Enter Access Key", type="password")
         submit = st.form_submit_button("Login")
-
         if submit:
             if password == "123":
                 st.session_state.authenticated = True
                 st.rerun()
             else:
-                st.error("Incorrect access key. Please try again.")
+                st.error("Incorrect access key.")
 
     st.markdown("<p style='color: #666;'>Contact admin for access credentials</p>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
 
-# =========================
-# MAIN APPLICATION
-# =========================
+    st.markdown("</div></div>", unsafe_allow_html=True)
+
+# ============ Main App ============
 def main_app():
-    # Custom sidebar styles
+    # Sidebar styling
     st.markdown("""
     <style>
         .stSidebar {
@@ -81,7 +78,6 @@ def main_app():
             background-color: #4e4376;
             color: white;
             border-radius: 8px;
-            padding: 10px 24px;
         }
         div[role="radiogroup"] > label {
             color: white !important;
@@ -96,7 +92,6 @@ def main_app():
             st.warning("Logo missing.")
         st.markdown("<h2 style='color: white;'>Navigation</h2>", unsafe_allow_html=True)
         selected = st.radio("", ["Home", "Diagnostics", "About Us", "Feedback"])
-
         if st.button("Logout"):
             st.session_state.authenticated = False
             st.rerun()
@@ -110,10 +105,7 @@ def main_app():
     elif selected == "Feedback":
         show_feedback()
 
-# =========================
-# PAGES
-# =========================
-
+# ============ Pages ============
 def show_home():
     st.markdown("<h1 style='text-align: center;'>Welcome to AI Health Diagnostic Hub</h1>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
@@ -141,23 +133,23 @@ def show_home():
     st.markdown("---")
     st.markdown("<h2 style='text-align: center;'>Key Features</h2>", unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns(3)
-    features = [
-        ("2.jpg", "Rapid Analysis"),
-        ("3.jpg", "Multi-Disease"),
-        ("4.jpg", "Confidence Metrics")
+    feature_data = [
+        ("2.jpg", "Rapid Analysis", "Get results in seconds"),
+        ("3.jpg", "Multi-Disease", "Supports several conditions"),
+        ("4.jpg", "Confidence Metrics", "Probability-based output")
     ]
-    for col, (img, title) in zip([col1, col2, col3], features):
+    cols = st.columns(3)
+    for col, (img, title, desc) in zip(cols, feature_data):
         try:
             col.image(f"Assets/{img}", width=150)
         except:
-            col.warning(f"{img} missing.")
+            col.warning(f"{img} not found.")
         col.markdown(f"<h4 style='text-align: center;'>{title}</h4>", unsafe_allow_html=True)
+        col.markdown(f"<p style='text-align: center;'>{desc}</p>", unsafe_allow_html=True)
 
 def show_diagnostics():
     st.markdown("<h1 style='text-align: center;'>Medical Diagnostics</h1>", unsafe_allow_html=True)
     disease = st.selectbox("Select Diagnostic Tool", ["Breast Cancer Detection", "Pneumonia Detection", "Malaria Detection"])
-
     uploaded_file = st.file_uploader("Upload Image", type=["jpg", "jpeg", "png"])
 
     if uploaded_file:
@@ -193,7 +185,6 @@ def show_about():
         st.image("Assets/5.jpg", use_container_width=True)
     except:
         st.warning("About image not found.")
-
     st.markdown("""
 ### 🎯 Our Mission  
 To democratize access to medical diagnostics through AI technology, particularly in underserved communities.
@@ -227,22 +218,20 @@ Message: {message}
 """
             msg = MIMEText(content)
             msg['Subject'] = "📩 New Feedback - AI Health Diagnostic Hub"
-            msg['From'] = os.getenv("EMAIL_USER")
-            msg['To'] = os.getenv("EMAIL_TO")
+            msg['From'] = EMAIL_USER
+            msg['To'] = EMAIL_TO
 
             try:
                 server = smtplib.SMTP("smtp.gmail.com", 587)
                 server.starttls()
-                server.login(os.getenv("EMAIL_USER"), os.getenv("EMAIL_PASS"))
+                server.login(EMAIL_USER, EMAIL_PASS)
                 server.send_message(msg)
                 server.quit()
-                st.success("✅ Thank you for your feedback! Your message has been sent to the admin.")
+                st.success("✅ Thank you! Your feedback has been sent.")
             except Exception as e:
                 st.error(f"❌ Failed to send email: {e}")
 
-# =========================
-# APP EXECUTION
-# =========================
+# ============ Run App ============
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
@@ -250,6 +239,7 @@ if st.session_state.authenticated:
     main_app()
 else:
     authenticate()
+
 
 
 
