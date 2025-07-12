@@ -3,7 +3,9 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
-# ============ Page Config ============
+# ========================
+# PAGE CONFIGURATION
+# ========================
 st.set_page_config(
     page_title="AI Health Diagnostic Hub",
     page_icon="🩺",
@@ -11,51 +13,50 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ============ Authentication ============
+# ========================
+# AUTHENTICATION
+# ========================
 def authenticate():
-    st.markdown("""
-    <style>
-    .centered-login {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-    }
-    .login-box {
-        background-color: #ffffff;
-        padding: 40px;
-        border-radius: 12px;
-        width: 100%;
-        max-width: 400px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-    </style>
-    <div class='centered-login'>
-        <div class='login-box'>
-    """, unsafe_allow_html=True)
+    # Center login box using Streamlit layout
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown("""
+        <style>
+        .login-box {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        </style>
+        """, unsafe_allow_html=True)
 
-    try:
-        st.image("Assets/logo.jpg", width=100)
-    except:
-        st.warning("Logo not found.")
+        with st.container():
+            st.markdown("<div class='login-box'>", unsafe_allow_html=True)
 
-    st.markdown("<h2>Medical AI Portal</h2>", unsafe_allow_html=True)
+            try:
+                st.image("Assets/logo.jpg", width=80)
+            except:
+                st.warning("Logo not found.")
 
-    with st.form("login"):
-        password = st.text_input("Enter Access Key", type="password")
-        submit = st.form_submit_button("Login")
-        if submit:
-            if password == "123":
-                st.session_state.authenticated = True
-                st.rerun()
-            else:
-                st.error("Incorrect access key.")
+            st.markdown("<h4 style='text-align: center;'>Medical AI Portal</h4>", unsafe_allow_html=True)
 
-    st.markdown("<p style='color: #666;'>Contact admin for access credentials</p>", unsafe_allow_html=True)
-    st.markdown("</div></div>", unsafe_allow_html=True)
+            with st.form("login"):
+                password = st.text_input("Enter Access Key", type="password")
+                submit = st.form_submit_button("Login")
+                if submit:
+                    if password == "123":
+                        st.session_state.authenticated = True
+                        st.rerun()
+                    else:
+                        st.error("Incorrect access key.")
 
-# ============ Main App ============
+            st.markdown("<p style='color: gray; font-size: 13px;'>Contact admin for access credentials</p>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+# ========================
+# MAIN APPLICATION
+# ========================
 def main_app():
     st.markdown("""
     <style>
@@ -93,7 +94,9 @@ def main_app():
     elif selected == "Feedback":
         show_feedback()
 
-# ============ Pages ============
+# ========================
+# HOME PAGE
+# ========================
 def show_home():
     st.markdown("<h1 style='text-align: center;'>Welcome to AI Health Diagnostic Hub</h1>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
@@ -135,6 +138,9 @@ def show_home():
         col.markdown(f"<h4 style='text-align: center;'>{title}</h4>", unsafe_allow_html=True)
         col.markdown(f"<p style='text-align: center;'>{desc}</p>", unsafe_allow_html=True)
 
+# ========================
+# DIAGNOSTICS PAGE
+# ========================
 def show_diagnostics():
     st.markdown("<h1 style='text-align: center;'>Medical Diagnostics</h1>", unsafe_allow_html=True)
     disease = st.selectbox("Select Diagnostic Tool", ["Breast Cancer Detection", "Pneumonia Detection", "Malaria Detection"])
@@ -167,6 +173,9 @@ def show_diagnostics():
             chart_df = pd.DataFrame(chart_data)
             st.bar_chart(chart_df.set_index("Class"), use_container_width=True)
 
+# ========================
+# ABOUT PAGE
+# ========================
 def show_about():
     st.markdown("<h1 style='text-align: center;'>About Our Platform</h1>", unsafe_allow_html=True)
     try:
@@ -186,6 +195,9 @@ This tool provides preliminary analysis only and should not replace professional
 </div>
 """, unsafe_allow_html=True)
 
+# ========================
+# FEEDBACK PAGE
+# ========================
 def show_feedback():
     st.markdown("<h1 style='text-align: center;'>💬 Feedback</h1>", unsafe_allow_html=True)
     with st.form("feedback_form"):
@@ -198,7 +210,9 @@ def show_feedback():
         if submitted:
             st.success("✅ Thank you! Your feedback has been submitted.")
 
-# ============ Run App ============
+# ========================
+# APP EXECUTION
+# ========================
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
@@ -206,6 +220,7 @@ if st.session_state.authenticated:
     main_app()
 else:
     authenticate()
+
 
 
 
