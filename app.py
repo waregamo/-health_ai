@@ -15,30 +15,23 @@ st.set_page_config(
 def authenticate():
     st.markdown("""
     <style>
-    .login-container {
-        background-image: url('Assets/bg_login.jpg');
-        background-size: cover;
-        background-position: center;
-        padding: 100px 0;
-        min-height: 100vh;
-    }
     .login-box {
-        background-color: rgba(255, 255, 255, 0.9);
+        background-color: #ffffff;
         padding: 40px;
         border-radius: 12px;
-        width: 400px;
-        margin: auto;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 400px;
+        margin: 100px auto;
         text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     </style>
     """, unsafe_allow_html=True)
 
-    st.markdown("<div class='login-container'>", unsafe_allow_html=True)
     st.markdown("<div class='login-box'>", unsafe_allow_html=True)
 
     try:
-        st.image("Assets/logo.jpg", width=150)
+        st.image("Assets/logo.jpg", width=100)
     except:
         st.warning("Logo not found.")
 
@@ -55,12 +48,10 @@ def authenticate():
                 st.error("Incorrect access key.")
 
     st.markdown("<p style='color: #666;'>Contact admin for access credentials</p>", unsafe_allow_html=True)
-
-    st.markdown("</div></div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # ============ Main App ============
 def main_app():
-    # Sidebar styling
     st.markdown("""
     <style>
         .stSidebar {
