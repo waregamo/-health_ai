@@ -18,7 +18,7 @@ st.set_page_config(
 # AUTHENTICATION (Static Password)
 # ==============================
 def authenticate():
-    st.image("Assets/logo.png", width=300)  # Replace with your logo
+    st.image("Assets/logo.jpg", width=300)  # Replace with your logo
     st.markdown("<h1 style='text-align: center;'>Medical AI Portal</h1>", unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1,2,1])
@@ -74,7 +74,7 @@ def main_app():
 
     # Sidebar Navigation
     with st.sidebar:
-        st.image("Assets/logo.png", width=200)  # Logo
+        st.image("Assets/logo.jpg", width=200)  # Logo
         st.markdown("<h2 style='color: white;'>Navigation</h2>", unsafe_allow_html=True)
         selected = st.radio("", ["Home", "Diagnostics", "About Us"])
         
