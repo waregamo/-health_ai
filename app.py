@@ -2,10 +2,8 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 from PIL import Image
-import smtplib
-from email.mime.text import MIMEText
 
-# ============ Streamlit Page Config ============
+# ============ Page Config ============
 st.set_page_config(
     page_title="AI Health Diagnostic Hub",
     page_icon="🩺",
@@ -13,18 +11,12 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ============ Load Secrets ============
-EMAIL_USER = st.secrets["EMAIL_USER"]
-EMAIL_PASS = st.secrets["EMAIL_PASS"]
-EMAIL_TO = st.secrets["EMAIL_TO"]
-
 # ============ Authentication ============
 def authenticate():
-    # Background CSS
     st.markdown("""
     <style>
     .login-container {
-        background-image: url('Assets/9.jpg');
+        background-image: url('Assets/bg_login.jpg');
         background-size: cover;
         background-position: center;
         padding: 100px 0;
@@ -208,28 +200,7 @@ def show_feedback():
         submitted = st.form_submit_button("Submit")
 
         if submitted:
-            content = f"""
-New Feedback Received:
-
-Name: {name}
-Email: {email}
-Rating: {rating}
-Message: {message}
-"""
-            msg = MIMEText(content)
-            msg['Subject'] = "📩 New Feedback - AI Health Diagnostic Hub"
-            msg['From'] = EMAIL_USER
-            msg['To'] = EMAIL_TO
-
-            try:
-                server = smtplib.SMTP("smtp.gmail.com", 587)
-                server.starttls()
-                server.login(EMAIL_USER, EMAIL_PASS)
-                server.send_message(msg)
-                server.quit()
-                st.success("✅ Thank you! Your feedback has been sent.")
-            except Exception as e:
-                st.error(f"❌ Failed to send email: {e}")
+            st.success("✅ Thank you! Your feedback has been submitted.")
 
 # ============ Run App ============
 if "authenticated" not in st.session_state:
