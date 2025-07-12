@@ -213,14 +213,13 @@ def show_feedback():
             submitted = st.form_submit_button("Submit")
 
             if submitted:
-                # You can store this data to a file or database here
                 st.session_state.feedback_submitted = True
-                st.experimental_rerun()
+                st.rerun()  # ✅ This is the correct version now
     else:
         st.success("✅ Thank you! Your feedback has been submitted.")
         if st.button("Submit Another Feedback"):
             st.session_state.feedback_submitted = False
-            st.experimental_rerun()
+            st.rerun()
 
 # ========================
 # APP EXECUTION
