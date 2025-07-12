@@ -200,15 +200,27 @@ This tool provides preliminary analysis only and should not replace professional
 # ========================
 def show_feedback():
     st.markdown("<h1 style='text-align: center;'>💬 Feedback</h1>", unsafe_allow_html=True)
-    with st.form("feedback_form"):
-        name = st.text_input("Your Name")
-        email = st.text_input("Email Address")
-        rating = st.slider("Rate Your Experience", 1, 5, 3)
-        message = st.text_area("Your Message")
-        submitted = st.form_submit_button("Submit")
 
-        if submitted:
-            st.success("✅ Thank you! Your feedback has been submitted.")
+    if "feedback_submitted" not in st.session_state:
+        st.session_state.feedback_submitted = False
+
+    if not st.session_state.feedback_submitted:
+        with st.form("feedback_form"):
+            name = st.text_input("Your Name")
+            email = st.text_input("Email Address")
+            rating = st.slider("Rate Your Experience", 1, 5, 3)
+            message = st.text_area("Your Message")
+            submitted = st.form_submit_button("Submit")
+
+            if submitted:
+                # You can store this data to a file or database here
+                st.session_state.feedback_submitted = True
+                st.experimental_rerun()
+    else:
+        st.success("✅ Thank you! Your feedback has been submitted.")
+        if st.button("Submit Another Feedback"):
+            st.session_state.feedback_submitted = False
+            st.experimental_rerun()
 
 # ========================
 # APP EXECUTION
