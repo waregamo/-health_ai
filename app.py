@@ -2,17 +2,13 @@ import streamlit as st
 import numpy as np
 from PIL import Image
 import pandas as pd
-import datetime
-import os
 import smtplib
 from email.mime.text import MIMEText
+import os
 from dotenv import load_dotenv
 
-load_dotenv()  # Load .env variables
+load_dotenv()
 
-# ==============================
-# APP CONFIGURATION
-# ==============================
 st.set_page_config(
     page_title="AI Health Diagnostic Hub",
     page_icon="🩺",
@@ -20,35 +16,62 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# ==============================
-# AUTHENTICATION
-# ==============================
+# =========================
+# AUTHENTICATION PAGE
+# =========================
 def authenticate():
+    # CSS for background image
+    st.markdown("""
+    <style>
+    .login-container {
+        background-image: url('Assets/9.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0;
+        min-height: 100vh;
+    }
+    .login-box {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 40px;
+        border-radius: 12px;
+        width: 400px;
+        margin: auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("<div class='login-container'>", unsafe_allow_html=True)
+    st.markdown("<div class='login-box'>", unsafe_allow_html=True)
+
     try:
-        st.image("Assets/logo.jpg", width=300)
+        st.image("Assets/logo.jpg", width=150)
     except:
         st.warning("Logo not found.")
 
-    st.markdown("<h1 style='text-align: center;'>Medical AI Portal</h1>", unsafe_allow_html=True)
+    st.markdown("<h2>Medical AI Portal</h2>", unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        with st.form("login"):
-            password = st.text_input("Enter Access Key", type="password")
-            submit = st.form_submit_button("Login")
+    with st.form("login"):
+        password = st.text_input("Enter Access Key", type="password")
+        submit = st.form_submit_button("Login")
 
-            if submit:
-                if password == "123":
-                    st.session_state.authenticated = True
-                    st.rerun()
-                else:
-                    st.error("Incorrect access key.")
-        st.markdown("<div style='text-align: center; color: #666;'>Contact admin for access credentials</div>", unsafe_allow_html=True)
+        if submit:
+            if password == "123":
+                st.session_state.authenticated = True
+                st.rerun()
+            else:
+                st.error("Incorrect access key. Please try again.")
 
-# ==============================
+    st.markdown("<p style='color: #666;'>Contact admin for access credentials</p>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# =========================
 # MAIN APPLICATION
-# ==============================
+# =========================
 def main_app():
+    # Custom sidebar styles
     st.markdown("""
     <style>
         .stSidebar {
@@ -70,7 +93,7 @@ def main_app():
         try:
             st.image("Assets/logo.jpg", width=200)
         except:
-            st.warning("Sidebar logo not found.")
+            st.warning("Logo missing.")
         st.markdown("<h2 style='color: white;'>Navigation</h2>", unsafe_allow_html=True)
         selected = st.radio("", ["Home", "Diagnostics", "About Us", "Feedback"])
 
@@ -87,9 +110,10 @@ def main_app():
     elif selected == "Feedback":
         show_feedback()
 
-# ==============================
-# COMPONENTS
-# ==============================
+# =========================
+# PAGES
+# =========================
+
 def show_home():
     st.markdown("<h1 style='text-align: center;'>Welcome to AI Health Diagnostic Hub</h1>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
@@ -142,23 +166,26 @@ def show_diagnostics():
 
         with st.spinner("Analyzing..."):
             if "Breast" in disease:
-                result, confidence, chart_data = "Benign", 0.92, [0.92, 0.07, 0.01]
-                labels = ["Benign", "Malignant", "Normal"]
+                result = "Benign"
+                confidence = 0.92
+                chart_data = {"Confidence": [0.92, 0.07, 0.01], "Class": ["Benign", "Malignant", "Normal"]}
             elif "Pneumonia" in disease:
-                result, confidence, chart_data = "Normal", 0.88, [0.88, 0.12]
-                labels = ["Normal", "Pneumonia"]
+                result = "Normal"
+                confidence = 0.88
+                chart_data = {"Confidence": [0.88, 0.12], "Class": ["Normal", "Pneumonia"]}
             else:
-                result, confidence, chart_data = "Uninfected", 0.95, [0.95, 0.05]
-                labels = ["Uninfected", "Infected"]
+                result = "Uninfected"
+                confidence = 0.95
+                chart_data = {"Confidence": [0.95, 0.05], "Class": ["Uninfected", "Infected"]}
 
-            st.success("Analysis Complete")
+            st.success("✅ Analysis Complete")
             col1, col2 = st.columns(2)
             col1.metric("Diagnosis", result)
-            col2.metric("Confidence", f"{confidence*100:.1f}%")
+            col2.metric("Confidence", f"{confidence * 100:.1f}%")
 
             st.markdown("### Confidence Breakdown")
-            st.bar_chart(chart_data, use_container_width=True)
-            st.caption("Classes: " + ", ".join(labels))
+            chart_df = pd.DataFrame(chart_data)
+            st.bar_chart(chart_df.set_index("Class"), use_container_width=True)
 
 def show_about():
     st.markdown("<h1 style='text-align: center;'>About Our Platform</h1>", unsafe_allow_html=True)
@@ -209,13 +236,13 @@ Message: {message}
                 server.login(os.getenv("EMAIL_USER"), os.getenv("EMAIL_PASS"))
                 server.send_message(msg)
                 server.quit()
-                st.success("✅ Feedback sent successfully.")
+                st.success("✅ Thank you for your feedback! Your message has been sent to the admin.")
             except Exception as e:
                 st.error(f"❌ Failed to send email: {e}")
 
-# ==============================
-# RUN APP
-# ==============================
+# =========================
+# APP EXECUTION
+# =========================
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
@@ -223,5 +250,6 @@ if st.session_state.authenticated:
     main_app()
 else:
     authenticate()
+
 
 
