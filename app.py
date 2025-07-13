@@ -214,7 +214,7 @@ def show_feedback():
 
             if submitted:
                 st.session_state.feedback_submitted = True
-                st.rerun()  # ✅ This is the correct version now
+                st.rerun()  # 
     else:
         st.success("✅ Thank you! Your feedback has been submitted.")
         if st.button("Submit Another Feedback"):
