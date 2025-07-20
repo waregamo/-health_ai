@@ -1,7 +1,7 @@
 import streamlit as st
-import numpy as np
 import pandas as pd
 from PIL import Image
+import base64
 
 # ========================
 # PAGE CONFIGURATION
@@ -16,70 +16,84 @@ st.set_page_config(
 # ========================
 # AUTHENTICATION
 # ========================
+def add_bg_from_local(image_file):
+    with open(image_file, "rb") as image:
+        encoded = base64.b64encode(image.read()).decode()
+        st.markdown(
+            f"""
+            <style>
+            .stApp {{
+                background-image: url("data:image/jpg;base64,{encoded}");
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }}
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
 def authenticate():
-    # Center login box using Streamlit layout
+    add_bg_from_local("Assets/bg_medical.jpg")
+
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
         <style>
-        .login-box {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+            .login-box {
+                background-color: rgba(255, 255, 255, 0.95);
+                padding: 2.5rem;
+                border-radius: 15px;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+                text-align: center;
+            }
+            .login-box input {
+                border-radius: 8px;
+                padding: 0.5rem;
+            }
+            .login-title {
+                font-size: 28px;
+                font-weight: 600;
+                color: #333;
+            }
         </style>
         """, unsafe_allow_html=True)
 
-        with st.container():
-            st.markdown("<div class='login-box'>", unsafe_allow_html=True)
+        st.markdown("<div class='login-box'>", unsafe_allow_html=True)
 
-            try:
-                st.image("Assets/logo.jpg", width=80)
-            except:
-                st.warning("Logo not found.")
+        try:
+            st.image("Assets/logo.jpg", width=90)
+        except:
+            st.warning("Logo not found.")
 
-            st.markdown("<h4 style='text-align: center;'>Medical AI Portal</h4>", unsafe_allow_html=True)
+        st.markdown("<div class='login-title'>🔐 AI Health Diagnostic Login</div>", unsafe_allow_html=True)
+        st.markdown("<p style='color: gray;'>Secure Access Portal for Medical Professionals</p>", unsafe_allow_html=True)
 
-            with st.form("login"):
-                password = st.text_input("Enter Access Key", type="password")
-                submit = st.form_submit_button("Login")
-                if submit:
-                    if password == "123":
-                        st.session_state.authenticated = True
-                        st.rerun()
-                    else:
-                        st.error("Incorrect access key.")
+        with st.form("login"):
+            password = st.text_input("Enter Access Key", type="password")
+            submit = st.form_submit_button("Login")
 
-            st.markdown("<p style='color: gray; font-size: 13px;'>Contact admin for access credentials</p>", unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
+            if submit:
+                if password == "123":
+                    st.session_state.authenticated = True
+                    st.rerun()
+                else:
+                    st.error("❌ Incorrect access key.")
+
+        st.markdown("<small style='color: gray;'>Need access? Contact admin at <a href='mailto:support@aihealth.com'>support@aihealth.com</a></small>", unsafe_allow_html=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ========================
 # MAIN APPLICATION
 # ========================
 def main_app():
-    st.markdown("""
-    <style>
-        .stSidebar {
-            background-color: #333 !important;
-        }
-        .stButton>button {
-            background-color: #4e4376;
-            color: white;
-            border-radius: 8px;
-        }
-        div[role="radiogroup"] > label {
-            color: white !important;
-        }
-    </style>
-    """, unsafe_allow_html=True)
-
     with st.sidebar:
         try:
             st.image("Assets/logo.jpg", width=200)
         except:
             st.warning("Logo missing.")
-        st.markdown("<h2 style='color: white;'>Navigation</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color: black;'>Navigation</h2>", unsafe_allow_html=True)
         selected = st.radio("", ["Home", "Diagnostics", "About Us", "Feedback"])
         if st.button("Logout"):
             st.session_state.authenticated = False
@@ -155,14 +169,26 @@ def show_diagnostics():
                 result = "Benign"
                 confidence = 0.92
                 chart_data = {"Confidence": [0.92, 0.07, 0.01], "Class": ["Benign", "Malignant", "Normal"]}
+                explanation = """
+                **Breast Cancer**: Benign means the tumor is *non-cancerous* and not life-threatening.
+                Regular checkups are still recommended.
+                """
             elif "Pneumonia" in disease:
                 result = "Normal"
                 confidence = 0.88
                 chart_data = {"Confidence": [0.88, 0.12], "Class": ["Normal", "Pneumonia"]}
+                explanation = """
+                **Pneumonia**: An infection that inflames the lungs. It causes cough, fever, and breathing difficulty.
+                A "Normal" result means no signs of infection were detected.
+                """
             else:
                 result = "Uninfected"
                 confidence = 0.95
                 chart_data = {"Confidence": [0.95, 0.05], "Class": ["Uninfected", "Infected"]}
+                explanation = """
+                **Malaria**: A mosquito-borne disease caused by parasites.
+                "Uninfected" means no signs of malaria parasites were detected in the blood smear.
+                """
 
             st.success("✅ Analysis Complete")
             col1, col2 = st.columns(2)
@@ -172,6 +198,9 @@ def show_diagnostics():
             st.markdown("### Confidence Breakdown")
             chart_df = pd.DataFrame(chart_data)
             st.bar_chart(chart_df.set_index("Class"), use_container_width=True)
+
+            st.markdown("### 📘 What does this mean?")
+            st.info(explanation)
 
 # ========================
 # ABOUT PAGE
@@ -214,7 +243,7 @@ def show_feedback():
 
             if submitted:
                 st.session_state.feedback_submitted = True
-                st.rerun()  # 
+                st.rerun()
     else:
         st.success("✅ Thank you! Your feedback has been submitted.")
         if st.button("Submit Another Feedback"):
