@@ -55,7 +55,7 @@ def authenticate():
             .login-title {
                 font-size: 28px;
                 font-weight: 600;
-                color: #333;
+                color:#006400;
             }
         </style>
         """, unsafe_allow_html=True)
